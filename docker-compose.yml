@@ -1,0 +1,9 @@
+version: "2"
+
+services:
+  web-services:
+    container_name: web-services
+    build: .
+    image: web-services:1.1
+    ports:
+      - "3000:3000"

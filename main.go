@@ -28,7 +28,7 @@ func main() {
 	}
 
 	sql := &storage.Sql{
-		Host:     os.Getenv("DB_HOST"),
+		Host:     "host.docker.internal",
 		Port:     port,
 		Password: os.Getenv("DB_PASS"),
 		UserName: os.Getenv("DB_USER"),
