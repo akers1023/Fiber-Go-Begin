@@ -2,7 +2,6 @@ package routes
 
 import (
 	"github.com/akers1023/handlers"
-	// "github.com/akers1023/middleware"
 	"github.com/gofiber/fiber/v2"
 )
 
