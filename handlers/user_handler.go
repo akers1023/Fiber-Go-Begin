@@ -26,7 +26,7 @@ func (r *Repository) HandlerRegister(context *fiber.Ctx) error {
 
 	//check email already exists?
 
-	token, refreshToken, _ := utils.GenerateAllTokens(*user.Email, user.ID)
+	token, refreshToken, _ := utils.GenerateAllTokens(*user.Email, user.ID, *user.Role)
 	user.Token = &token
 	user.RefreshToken = &refreshToken
 
@@ -69,7 +69,7 @@ func (r *Repository) HandlerLogin(context *fiber.Ctx) error {
 		return HandleErrorResponse(context, http.StatusInternalServerError, "user not found")
 	}
 
-	token, refreshToken, _ := utils.GenerateAllTokens(*foundUser.Email, foundUser.ID)
+	token, refreshToken, _ := utils.GenerateAllTokens(*foundUser.Email, foundUser.ID, *foundUser.Role)
 	utils.UpdateAllTokens(r.DB, foundUser.ID, token, refreshToken)
 
 	return context.Status(http.StatusOK).JSON(&fiber.Map{
@@ -77,4 +77,44 @@ func (r *Repository) HandlerLogin(context *fiber.Ctx) error {
 		"message":       "Login successfully",
 		"token":         token,
 		"refresh_token": refreshToken})
+}
+
+func (r *Repository) GetUser(context *fiber.Ctx) (err error) {
+	userID := context.Params("id")
+
+	if err := utils.MatchUserTypeToUID(context, userID); err != nil {
+		return HandleErrorResponse(context, http.StatusBadRequest, "Request failed")
+	}
+	var user models.User
+	err = r.DB.Where("id = ?", userID).First(&user).Error
+	if err != nil {
+		return HandleErrorResponse(context, http.StatusInternalServerError, "user not found")
+	}
+	context.Status(http.StatusOK).JSON(&fiber.Map{
+		"message": "user is fetched successfully",
+		"data":    user,
+	})
+	return nil
+}
+
+func (r *Repository) GetAllUsers(context *fiber.Ctx) error {
+	if err := utils.CheckUserType(context, "ADMIN"); err != nil {
+		return HandleErrorResponse(context, http.StatusBadRequest, err.Error())
+	}
+
+	users := &[]models.User{}
+
+	err := r.DB.Find(users).Error
+	if err != nil {
+		context.Status(http.StatusBadRequest).JSON(
+			&fiber.Map{"message": "could not get users"})
+		return err
+	}
+
+	context.Status(http.StatusOK).JSON(&fiber.Map{
+		"message": "users fetched successfully",
+		"data":    users,
+	})
+	return nil
+
 }

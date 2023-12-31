@@ -16,13 +16,15 @@ var SECRET_KEY string = os.Getenv("SECRET_KEY")
 type SignedDetails struct {
 	Email string
 	Uid   string
+	Role  string
 	jwt.StandardClaims
 }
 
-func GenerateAllTokens(email string, uid string) (signedToken string, signedRefreshToken string, err error) {
+func GenerateAllTokens(email string, uid string, role string) (signedToken string, signedRefreshToken string, err error) {
 	claims := &SignedDetails{
 		Email: email,
 		Uid:   uid,
+		Role:  role,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(24)).Unix(),
 		},

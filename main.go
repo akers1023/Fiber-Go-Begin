@@ -51,6 +51,7 @@ func main() {
 	// print(db)
 	app := fiber.New()
 	routes.SetupBooksRoutes(app, repo)
+	routes.SetupAuthRoutes(app, repo)
 	routes.SetupUsersRoutes(app, repo)
 	app.Listen(":3000")
 

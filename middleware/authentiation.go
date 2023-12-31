@@ -22,6 +22,7 @@ func Authenticate() fiber.Handler {
 
 		c.Locals("email", claims.Email)
 		c.Locals("uid", claims.Uid)
+		c.Locals("role", claims.Role)
 		return c.Next()
 	}
 }

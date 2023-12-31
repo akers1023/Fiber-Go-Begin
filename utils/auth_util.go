@@ -7,7 +7,7 @@ import (
 )
 
 func CheckUserType(context *fiber.Ctx, role string) (err error) {
-	userType := context.Get("role")
+	userType := context.Params("role")
 	err = nil
 	if userType != role {
 		err = errors.New("Unauthorized to access this resource")
@@ -17,8 +17,8 @@ func CheckUserType(context *fiber.Ctx, role string) (err error) {
 }
 
 func MatchUserTypeToUID(context *fiber.Ctx, userID string) (err error) {
-	userType := context.Get("role")
-	uid := context.Get("id")
+	userType := context.Params("role")
+	uid := context.Params("id")
 
 	err = nil
 	if userID != uid && userType != "USER" {
